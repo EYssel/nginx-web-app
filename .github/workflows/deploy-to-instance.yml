@@ -1,8 +1,12 @@
 name: Deploy Image
+
 on:
-  push:
-    branches:
-      - "master"
+  workflow_dispatch:
+    inputs:
+        instance-id:
+          description: 'The ID of the instance to deploy to'
+          required: true
+          type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
