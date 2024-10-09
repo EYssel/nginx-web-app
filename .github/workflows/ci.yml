@@ -4,6 +4,7 @@ on:
     paths:
       - "app/**"
       - "Dockerfile"
+      - ".github/workflows/ci.yml"
     branches:
       - "master"
 
