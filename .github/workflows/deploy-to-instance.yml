@@ -3,14 +3,14 @@ name: Deploy Image To Instance
 on:
   workflow_dispatch:
     inputs:
-        instance-id:
-          description: 'The ID of the instance to deploy to'
-          required: true
-          type: string
-        image-tag:
-          description: 'The Tag of the ECR image to deploy'
-          required: true
-          type: string
+      instance-ip:
+        description: "The IP of the instance to deploy to"
+        required: true
+        type: string
+      image-tag:
+        description: "The Tag of the ECR image to deploy"
+        required: true
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -32,3 +32,31 @@ jobs:
           aws-region: us-east-1
       - name: Check out repository code
         uses: actions/checkout@v3
+
+      - name: Deploy Image
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOSTNAME: ${{inputs.instance-ip}}
+          USER_NAME: ${{secrets.USER_NAME}}
+
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME}
+
+#
+# - name: Deploy
+#         env:
+#           # add ssh-private-key to env variable
+#           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+#         run: |
+#           # Copy ssh private key to the file with permissions
+#           echo "$SSH_PRIVATE_KEY" > ssh_private_key && chmod 600 ssh_private_key
+
+#           # Create application folder on ec2 and copy nginx directory into it
+#           scp -i ssh_private_key -r nginx ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_ADDRESS }}:application
+
+#           # Copy deploy.sh file in the application folder inside the EC2 instance,
+#           cat deploy.sh | ssh -i ssh_private_key ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_ADDRESS }} 'cat > ./application/deploy.sh'
+
+#           # Copy docker-compose to EC2, configure envrinment variabes and run deploy.sh
+#           cat docker-compose.yaml | ssh -i ssh_private_key ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_ADDRESS }} sudo PUBLISH_PORT=${{secrets.PUBLISH_PORT}} 'bash -c "cd application && cat > docker-compose.yaml && chmod -R 755 ./deploy.sh && ./deploy.sh && cd .. && rm -rf application"'
