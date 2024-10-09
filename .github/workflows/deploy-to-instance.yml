@@ -7,6 +7,10 @@ on:
           description: 'The ID of the instance to deploy to'
           required: true
           type: string
+        image-tag:
+          description: 'The Tag of the ECR image to deploy'
+          required: true
+          type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
