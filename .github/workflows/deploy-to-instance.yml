@@ -1,4 +1,4 @@
-name: Deploy Image
+name: Deploy Image To Instance
 
 on:
   workflow_dispatch:
@@ -17,7 +17,7 @@ permissions:
   contents: read # Checkout
 
 jobs:
-  deploy-infrastructure:
+  deploy-image:
     runs-on: ubuntu-latest
 
     steps:

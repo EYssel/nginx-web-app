@@ -1,8 +1,12 @@
 name: Publish Image
 on:
   push:
+    paths:
+      - "app/**"
+      - "Dockerfile"
     branches:
       - "master"
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
